@@ -13,10 +13,9 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh '''
-                    echo "🛠️ Setting up environment..."
-                    apt-get update -y
-                    apt-get install -y python3 python3-pip
-                    pip3 install -r requirements.txt
+                echo 🧩 Installing dependencies from requirements.txt...
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 '''
             }
         }
