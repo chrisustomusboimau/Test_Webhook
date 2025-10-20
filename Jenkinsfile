@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        docker {
+        dockerContainer {
             image 'python:3.10-slim'
-            args '-u' // agar log realtime
+            args '-u'
         }
     }
 
