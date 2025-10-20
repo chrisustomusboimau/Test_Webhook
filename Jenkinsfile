@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        dockerContainer {
+            image 'python:3.10-slim'
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -13,8 +17,8 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh '''
-                echo "🔍 Checking Python installation..."
-                python3 --version || { echo "⚠️ Python3 not found"; exit 1; }
+                echo "🔍 Python version:"
+                python3 --version
 
                 echo "🧩 Installing dependencies from requirements.txt..."
                 python3 -m venv venv
@@ -27,7 +31,6 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo "🧪 Running tests..."
                 sh '''
                 . venv/bin/activate
                 pytest tests/ --junitxml=report.xml || echo "⚠️ No tests found"
@@ -43,14 +46,5 @@ pipeline {
 
     triggers {
         githubPush()
-    }
-
-    post {
-        success {
-            echo '✅ Build and Test Succeeded!'
-        }
-        failure {
-            echo '❌ Build or Test Failed.'
-        }
     }
 }
