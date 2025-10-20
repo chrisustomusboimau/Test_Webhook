@@ -55,8 +55,29 @@ pipeline {
                     junit 'report.xml'
                 }
             }
+            }
+        stage('Deploy Container') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                sh '''
+                echo "🚀 Building Docker image..."
+                docker build -t my-app:latest .
+        
+                echo "🛑 Stopping old container..."
+                docker stop my-app-container || true
+                docker rm my-app-container || true
+        
+                echo "🎯 Running new container..."
+                docker run -d \
+                  --name my-app-container \
+                  -p 8080:8080 \
+                  -v /var/jenkins_home/my-app-data:/app/data \
+                  my-app:latest
+                '''
+            }
         }
-    }
 
     triggers {
         githubPush()
