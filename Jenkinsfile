@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        dockerContainer {
-            image 'python:3.10-slim'
-            args '-u'
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
@@ -19,7 +14,8 @@ pipeline {
             steps {
                 sh '''
                 echo "🔍 Checking Python installation..."
-                python3 --version
+                python3 --version || { echo "⚠️ Python3 not found"; exit 1; }
+
                 echo "🧩 Installing dependencies from requirements.txt..."
                 python3 -m venv venv
                 . venv/bin/activate
