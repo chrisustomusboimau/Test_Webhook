@@ -18,6 +18,7 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 sh '''
+                echo ok
                 echo 🧩 Installing dependencies from requirements.txt...
                 python3 -m venv venv
                 . venv/bin/activate
