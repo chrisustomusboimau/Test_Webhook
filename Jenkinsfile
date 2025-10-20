@@ -4,24 +4,27 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'GIT_WEBHOOK',
+                git credentialsId: 'git-credentials',
                     url: 'https://github.com/chrisustomusboimau/Test_Webhook.git',
                     branch: 'main'
             }
         }
 
-        stage('Build') {
+        stage('Setup Environment') {
             steps {
-                echo '🔨 Running build process...'
-                sh 'echo "Build step berjalan di Linux agent"'
+                sh '''
+                    echo "🛠️ Setting up environment..."
+                    apt-get update -y
+                    apt-get install -y python3 python3-pip
+                    pip3 install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                echo '🧪 Running tests...'
-                // Ganti sesuai kebutuhan, misalnya:
-                sh 'pytest tests/ --junitxml=report.xml || echo "No tests found"'
+                echo "🧪 Running tests..."
+                sh 'pytest tests/ --junitxml=report.xml || echo "⚠️ No tests found"'
             }
             post {
                 always {
